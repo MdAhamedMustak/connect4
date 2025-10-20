@@ -669,12 +669,17 @@ func generateID() string {
 }
 
 func initDB() *sql.DB {
-	password := "postgres"
-	if p := os.Getenv("DB_PASSWORD"); p != "" {
-		password = p
-	}
+	// Read from environment variables with defaults
+	host := getEnv("DB_HOST", "localhost")
+	port := getEnv("DB_PORT", "5432")
+	user := getEnv("DB_USER", "postgres")
+	password := getEnv("DB_PASSWORD", "postgres")
+	dbname := getEnv("DB_NAME", "connect4")
+	sslmode := getEnv("DB_SSLMODE", "disable")
 	
-	connStr := fmt.Sprintf("host=localhost port=5432 user=postgres password=%s dbname=connect4 sslmode=disable", password)
+	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", 
+		host, port, user, password, dbname, sslmode)
+	
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Println("⚠ Database connection failed:", err)
@@ -684,7 +689,7 @@ func initDB() *sql.DB {
 	
 	if err := db.Ping(); err != nil {
 		log.Println("⚠ Database ping failed:", err)
-		log.Println("⚠ Check if PostgreSQL is running and password is correct")
+		log.Println("⚠ Check if PostgreSQL is running and credentials are correct")
 		log.Println("⚠ Game will work but leaderboard won't be saved")
 		return nil
 	}
@@ -711,15 +716,32 @@ func initDB() *sql.DB {
 }
 
 func initKafka() *kafka.Writer {
-	writer := &kafka.Writer{Addr: kafka.TCP("localhost:9092"), Topic: "game-events", Balancer: &kafka.LeastBytes{}}
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	broker := getEnv("KAFKA_BROKER", "localhost:9092")
+	topic := getEnv("KAFKA_TOPIC", "game-events")
+	
+	writer := &kafka.Writer{
+		Addr:     kafka.TCP(broker),
+		Topic:    topic,
+		Balancer: &kafka.LeastBytes{},
+	}
+	
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
+	
 	if writer.WriteMessages(ctx, kafka.Message{Key: []byte("test"), Value: []byte("test")}) != nil {
-		log.Println("⚠ Kafka skipped (game works without it)")
+		log.Println("⚠ Kafka not available (optional - game works without it)")
 		return nil
 	}
+	
 	log.Println("✓ Kafka connected")
 	return writer
+}
+
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
 }
 
 func main() {

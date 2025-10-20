@@ -8,11 +8,16 @@
     "react-scripts": "5.x",
     "lucide-react": "^0.263.1"
   },
-  "scripts": {
-  "dev": "next dev",
-  "build": "next build",
-  "start": "next start"
+  "engines": {
+  "node": "20.x",
+  "npm": "9.x"
 },
+
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test"
+  },
   "eslintConfig": {
     "extends": ["react-app"]
   },

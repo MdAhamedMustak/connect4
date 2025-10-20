@@ -1,66 +1,27 @@
 # Binaries
 *.exe
-*.exe~
-*.dll
-*.so
-*.dylib
 backend/connect4-server
 analytics/analytics-consumer
-
-# Test binary
-*.test
-
-# Output of the go coverage tool
-*.out
-
-# Go workspace file
-go.work
 
 # Dependencies
 node_modules/
 vendor/
 
-# Build outputs
+# Build
 frontend/build/
-frontend/dist/
 
-# Environment variables
+# Environment
 .env
 .env.local
 .env.production
-.env.development.local
-.env.test.local
-.env.production.local
 
 # IDE
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
-.DS_Store
 
 # Logs
 *.log
-logs/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Database
-*.db
-*.sqlite
-
-# Coverage
-coverage/
-*.coverprofile
 
 # OS
+.DS_Store
 Thumbs.db
-
-# Docker
-docker-compose.override.yml
-
-# Temporary files
-*.tmp
-*.temp

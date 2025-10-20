@@ -9,8 +9,7 @@
     "lucide-react": "^0.263.1"
   },
   "engines": {
-  "node": "20.x",
-  "npm": "9.x"
+  "node": "20.x"
 },
 
   "scripts": {
